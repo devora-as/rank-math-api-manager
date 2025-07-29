@@ -6,50 +6,50 @@
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net/)
 [![WordPress Version](https://img.shields.io/badge/WordPress-5.0+-green.svg)](https://wordpress.org/)
 
-## 📋 Oversikt
+## 📋 Overview
 
 **Plugin Name**: Rank Math API Manager  
 **Version**: 1.6
 **Author**: Devora AS  
-**Description**: WordPress-plugin som eksponerer REST API-endepunkter for å oppdatere Rank Math SEO-metadata programmatisk.
+**Description**: WordPress plugin that exposes REST API endpoints to update Rank Math SEO metadata programmatically.
 
-## 🎯 Formål
+## 🎯 Purpose
 
-Dette plugin-et utvider WordPress REST API med tilpassede endepunkter som lar eksterne systemer (som n8n workflows) oppdatere Rank Math SEO-felter direkte via API-kall. Dette eliminerer behovet for manuell SEO-konfigurasjon og integrerer sømløst med automatisering.
+This plugin extends the WordPress REST API with custom endpoints that allow external systems (such as n8n workflows) to update Rank Math SEO fields directly via API calls. This eliminates the need for manual SEO configuration and integrates seamlessly with automation.
 
-## ✨ Funksjoner
+## ✨ Features
 
-### 🔧 SEO-felt som støttes
+### 🔧 Supported SEO Fields
 
-- **SEO Title** (`rank_math_title`) - Meta-tittel for søkemotorer
-- **SEO Description** (`rank_math_description`) - Meta-beskrivelse for søkemotorer
-- **Canonical URL** (`rank_math_canonical_url`) - Kanonisk URL for duplikatinnhold
-- **Focus Keyword** (`rank_math_focus_keyword`) - Hovedsøkeord for artikkelen
+- **SEO Title** (`rank_math_title`) - Meta title for search engines
+- **SEO Description** (`rank_math_description`) - Meta description for search engines
+- **Canonical URL** (`rank_math_canonical_url`) - Canonical URL for duplicate content
+- **Focus Keyword** (`rank_math_focus_keyword`) - Primary keyword for the article
 
-### 🌐 REST API Endepunkter
+### 🌐 REST API Endpoints
 
 #### POST `/wp-json/rank-math-api/v1/update-meta`
 
-Oppdaterer Rank Math SEO-metadata for et spesifikt innlegg eller produkt.
+Updates Rank Math SEO metadata for a specific post or product.
 
-**Parametere:**
+**Parameters:**
 
-- `post_id` (påkrevd) - ID til innlegget/produktet
-- `rank_math_title` (valgfritt) - SEO-tittel
-- `rank_math_description` (valgfritt) - SEO-beskrivelse
-- `rank_math_canonical_url` (valgfritt) - Kanonisk URL
-- `rank_math_focus_keyword` (valgfritt) - Fokusord
+- `post_id` (required) - ID of the post/product
+- `rank_math_title` (optional) - SEO title
+- `rank_math_description` (optional) - SEO description
+- `rank_math_canonical_url` (optional) - Canonical URL
+- `rank_math_focus_keyword` (optional) - Focus keyword
 
-**Eksempel på forespørsel:**
+**Request Example:**
 
 ```bash
 curl -X POST "https://example.com/wp-json/rank-math-api/v1/update-meta" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -H "Authorization: Basic [base64-encoded-credentials]" \
-  -d "post_id=123&rank_math_title=Optimalisert tittel&rank_math_description=SEO beskrivelse&rank_math_focus_keyword=søkeord"
+  -d "post_id=123&rank_math_title=Optimized title&rank_math_description=SEO description&rank_math_focus_keyword=keyword"
 ```
 
-**Respons:**
+**Response:**
 
 ```json
 {
@@ -59,33 +59,33 @@ curl -X POST "https://example.com/wp-json/rank-math-api/v1/update-meta" \
 }
 ```
 
-## 🚀 Installasjon
+## 🚀 Installation
 
-### 1. Plugin-installasjon
+### 1. Plugin Installation
 
-1. Last opp `rank-math-api-manager.php` til `/wp-content/plugins/rank-math-api-manager/`
-2. Aktiver plugin-et i WordPress admin-panel
-3. Verifiser at plugin-et er aktivt
+1. Upload `rank-math-api-manager.php` to `/wp-content/plugins/rank-math-api-manager/`
+2. Activate the plugin in WordPress admin panel
+3. Verify that the plugin is active
 
-### 2. Tillatelser
+### 2. Permissions
 
-Plugin-et krever at brukeren har `edit_posts`-rettigheter for å oppdatere metadata.
+The plugin requires users to have `edit_posts` permissions to update metadata.
 
-### 3. REST API-tilgang
+### 3. REST API Access
 
-Sørg for at WordPress REST API er tilgjengelig og ikke blokkert av sikkerhetslag.
+Ensure that the WordPress REST API is available and not blocked by security layers.
 
-## 🔗 Integrasjon med n8n Workflow
+## 🔗 Integration with n8n Workflow
 
-Dette plugin-et er spesielt designet for å fungere med Devora sin n8n workflow "Write wordpress post with AI".
+This plugin is specifically designed to work with Devora's n8n workflow "Write wordpress post with AI".
 
-### Workflow-integrasjon
+### Workflow Integration
 
-1. **Automatisk SEO-generering**: AI-genererer SEO-metadata basert på innhold
-2. **Programmatisk oppdatering**: n8n sender API-kall til plugin-et
-3. **Sømløs integrasjon**: Ingen manuell intervensjon nødvendig
+1. **Automatic SEO Generation**: AI generates SEO metadata based on content
+2. **Programmatic Update**: n8n sends API calls to the plugin
+3. **Seamless Integration**: No manual intervention required
 
-### n8n Node-konfigurasjon
+### n8n Node Configuration
 
 ```json
 {
@@ -101,43 +101,43 @@ Dette plugin-et er spesielt designet for å fungere med Devora sin n8n workflow 
 }
 ```
 
-## 🛡️ Sikkerhet
+## 🛡️ Security
 
-### Autentisering
+### Authentication
 
-- Krever WordPress Application Password eller Basic Auth
-- Validerer brukerrettigheter (`edit_posts`)
-- Sanitizerer alle input-parametere
+- Requires WordPress Application Password or Basic Auth
+- Validates user permissions (`edit_posts`)
+- Sanitizes all input parameters
 
-### Validering
+### Validation
 
-- Validerer at `post_id` eksisterer
-- Sanitizerer tekst-felter med `sanitize_text_field()`
-- Validerer URL-er med `esc_url_raw()`
+- Validates that `post_id` exists
+- Sanitizes text fields with `sanitize_text_field()`
+- Validates URLs with `esc_url_raw()`
 
-## 🔧 Tekniske Detaljer
+## 🔧 Technical Details
 
 ### Post Types
 
-Plugin-et støtter automatisk:
+The plugin automatically supports:
 
-- **Posts** (standard WordPress innlegg)
-- **Products** (WooCommerce produkter, hvis WooCommerce er aktivt)
+- **Posts** (standard WordPress posts)
+- **Products** (WooCommerce products, if WooCommerce is active)
 
 ### Meta Fields
 
-Alle SEO-felter registreres som post meta med:
+All SEO fields are registered as post meta with:
 
-- `show_in_rest: true` - Tilgjengelig via REST API
-- `single: true` - Enkelt verdier
-- `type: string` - String-datatype
-- `auth_callback` - Tillatelseskontroll
+- `show_in_rest: true` - Available via REST API
+- `single: true` - Single values
+- `type: string` - String data type
+- `auth_callback` - Permission control
 
-## 🗺️ Utviklingsplan (Roadmap)
+## 🗺️ Development Roadmap
 
-### 🎯 Fase 1: Utvidet Feltstøtte (Høy Prioritet)
+### 🎯 Phase 1: Extended Field Support (High Priority)
 
-#### 1.1 Sosiale Medier Meta-tagger
+#### 1.1 Social Media Meta Tags
 
 - **Facebook Title** (`rank_math_facebook_title`)
 - **Facebook Description** (`rank_math_facebook_description`)
@@ -146,7 +146,7 @@ Alle SEO-felter registreres som post meta med:
 - **Twitter Description** (`rank_math_twitter_description`)
 - **Twitter Image** (`rank_math_twitter_image`)
 
-#### 1.2 Avanserte SEO-felter
+#### 1.2 Advanced SEO Fields
 
 - **Robots Meta** (`rank_math_robots`)
 - **Advanced Robots** (`rank_math_advanced_robots`)
@@ -159,264 +159,264 @@ Alle SEO-felter registreres som post meta med:
 - **Schema Type** (`rank_math_schema_type`)
 - **Article Schema Type** (`rank_math_schema_article_type`)
 
-### 🚀 Fase 2: Bulk-operasjoner og Lesefunksjoner
+### 🚀 Phase 2: Bulk Operations and Read Functions
 
-#### 2.1 Bulk-oppdateringer
+#### 2.1 Bulk Updates
 
 ```php
 POST /wp-json/rank-math-api/v1/bulk-update
 ```
 
-- Oppdater flere innlegg/produkter i én API-forespørsel
-- Støtte for batch-prosessering
-- Feilhåndtering for individuelle oppdateringer
+- Update multiple posts/products in one API request
+- Support for batch processing
+- Error handling for individual updates
 
-#### 2.2 Lesefunksjoner
+#### 2.2 Read Functions
 
 ```php
 GET /wp-json/rank-math-api/v1/get-meta/{post_id}
 GET /wp-json/rank-math-api/v1/posts
 ```
 
-- Hent eksisterende SEO-metadata
-- Liste over innlegg med SEO-informasjon
-- Filtrering og sortering
+- Retrieve existing SEO metadata
+- List of posts with SEO information
+- Filtering and sorting
 
-#### 2.3 SEO-status Endepunkt
+#### 2.3 SEO Status Endpoint
 
 ```php
 GET /wp-json/rank-math-api/v1/seo-status/{post_id}
 ```
 
-- SEO-poengsum for innlegg
-- Manglende felter
-- Anbefalinger for forbedring
-- Schema-status
+- SEO score for posts
+- Missing fields
+- Improvement recommendations
+- Schema status
 
-### 🔄 Fase 3: Automatisering og Integrasjon
+### 🔄 Phase 3: Automation and Integration
 
-#### 3.1 Betingede Oppdateringer
+#### 3.1 Conditional Updates
 
 ```php
 POST /wp-json/rank-math-api/v1/smart-update
 ```
 
-- Oppdater kun hvis felter er tomme
-- Oppdater kun hvis verdier er forskjellige
-- Minimum/maksimum lengde-validering
-- Duplikatkontroll
+- Update only if fields are empty
+- Update only if values are different
+- Minimum/maximum length validation
+- Duplicate checking
 
-#### 3.2 Webhook-støtte
+#### 3.2 Webhook Support
 
 ```php
 POST /wp-json/rank-math-api/v1/webhooks
 ```
 
-- Registrer webhooks for SEO-oppdateringer
-- Real-time varsling ved endringer
-- Konfigurerbare webhook-endepunkter
+- Register webhooks for SEO updates
+- Real-time notifications for changes
+- Configurable webhook endpoints
 
-#### 3.3 SEO-mal System
+#### 3.3 SEO Template System
 
 ```php
 POST /wp-json/rank-math-api/v1/apply-template
 ```
 
-- Forhåndsdefinerte SEO-maler
-- Variabel-substitusjon
-- Innholdsbaserte maler (blogg, produkt, side)
+- Predefined SEO templates
+- Variable substitution
+- Content-based templates (blog, product, page)
 
-### 📊 Fase 4: Avanserte Funksjoner
+### 📊 Phase 4: Advanced Features
 
-#### 4.1 SEO-validering
+#### 4.1 SEO Validation
 
 ```php
 POST /wp-json/rank-math-api/v1/validate
 ```
 
-- Validering av SEO-metadata før lagring
-- Lengde-kontroller
-- Søkeord-tetthet
-- Duplikat-sjekk
+- Validation of SEO metadata before saving
+- Length controls
+- Keyword density
+- Duplicate checking
 
-#### 4.2 Analytics og Rapportering
+#### 4.2 Analytics and Reporting
 
 ```php
 GET /wp-json/rank-math-api/v1/analytics
 ```
 
-- SEO-statistikk for nettstedet
-- Gjennomsnittlig SEO-poengsum
-- Implementeringsgrad for schema
-- Manglende metadata-oversikt
+- SEO statistics for the website
+- Average SEO score
+- Schema implementation rate
+- Missing metadata overview
 
-#### 4.3 Rate Limiting og Sikkerhet
+#### 4.3 Rate Limiting and Security
 
-- Rate limiting per bruker/IP
-- API-nøkkel-støtte
+- Rate limiting per user/IP
+- API key support
 - Audit logging
-- Avansert feilhåndtering
+- Advanced error handling
 
-### 🌐 Fase 5: Enterprise-funksjoner
+### 🌐 Phase 5: Enterprise Features
 
-#### 5.1 Multi-site Støtte
+#### 5.1 Multi-site Support
 
 ```php
 POST /wp-json/rank-math-api/v1/multisite-update
 ```
 
-- Støtte for WordPress multisite
-- Cross-site SEO-synkronisering
-- Sentralisert SEO-administrasjon
+- Support for WordPress multisite
+- Cross-site SEO synchronization
+- Centralized SEO administration
 
-#### 5.2 Avanserte Integrasjoner
+#### 5.2 Advanced Integrations
 
-- Google Search Console API-integrasjon
-- Google Analytics 4-integrasjon
-- Eksterne SEO-verktøy-integrasjon
+- Google Search Console API integration
+- Google Analytics 4 integration
+- External SEO tool integration
 
-## 📈 Forventet Tidsplan
+## 📈 Expected Timeline
 
-| Fase | Funksjoner           | Estimeret Levering | Status      |
-| ---- | -------------------- | ------------------ | ----------- |
-| 1    | Utvidet Feltstøtte   | Q3 2025            | 🔄 Planlagt |
-| 2    | Bulk-operasjoner     | Q3 2025            | 🔄 Planlagt |
-| 3    | Automatisering       | Q3 2025            | 🔄 Planlagt |
-| 4    | Avanserte Funksjoner | Q4 2025            | 🔄 Planlagt |
-| 5    | Enterprise           | Q1 2026            | 🔄 Planlagt |
+| Phase | Features               | Estimated Delivery | Status     |
+| ----- | ---------------------- | ------------------ | ---------- |
+| 1     | Extended Field Support | Q3 2025            | 🔄 Planned |
+| 2     | Bulk Operations        | Q3 2025            | 🔄 Planned |
+| 3     | Automation             | Q3 2025            | 🔄 Planned |
+| 4     | Advanced Features      | Q4 2025            | 🔄 Planned |
+| 5     | Enterprise             | Q1 2026            | 🔄 Planned |
 
-## 🎯 Brukstilfeller
+## 🎯 Use Cases
 
-### 1. **Innholdssyndikering**
+### 1. **Content Syndication**
 
-- Oppdater SEO-metadata når innhold syndikeres
-- Cross-site SEO-synkronisering
-- Automatisk SEO-optimalisering
+- Update SEO metadata when content is syndicated
+- Cross-site SEO synchronization
+- Automatic SEO optimization
 
-### 2. **AI-drevet SEO-optimalisering**
+### 2. **AI-driven SEO Optimization**
 
-- Integrasjon med AI-verktøy
-- Automatisk søkeord-generering
-- Innholdsbasert SEO-forslag
+- Integration with AI tools
+- Automatic keyword generation
+- Content-based SEO suggestions
 
-### 3. **E-handel SEO-automatisering**
+### 3. **E-commerce SEO Automation**
 
-- Produktkatalog-optimalisering
-- Sesongbaserte kampanjer
-- Lagerbasert SEO-oppdatering
+- Product catalog optimization
+- Seasonal campaigns
+- Inventory-based SEO updates
 
-### 4. **Bulk SEO-administrasjon**
+### 4. **Bulk SEO Administration**
 
-- Masserapportering av innlegg
-- SEO-audit-automatisering
-- Konkurrentanalyse-integrasjon
+- Mass reporting of posts
+- SEO audit automation
+- Competitor analysis integration
 
 ## ❓ FAQ (Frequently Asked Questions)
 
-### 🤔 Generelle Spørsmål
+### 🤔 General Questions
 
-**Q: Hva er Rank Math API Manager?**
-A: Rank Math API Manager er et WordPress-plugin som lar deg oppdatere Rank Math SEO-metadata programmatisk via REST API-endepunkter. Det er spesielt designet for å integrere med automatisering som n8n workflows.
+**Q: What is Rank Math API Manager?**
+A: Rank Math API Manager is a WordPress plugin that allows you to update Rank Math SEO metadata programmatically via REST API endpoints. It's specifically designed to integrate with automation like n8n workflows.
 
-**Q: Hvilke WordPress-versjoner støttes?**
-A: Plugin-et krever WordPress 5.0 eller nyere og PHP 7.4 eller nyere.
+**Q: Which WordPress versions are supported?**
+A: The plugin requires WordPress 5.0 or newer and PHP 7.4 or newer.
 
-**Q: Er Rank Math SEO-plugin påkrevd?**
-A: Ja, Rank Math SEO-plugin må være installert og aktivert for at dette plugin-et skal fungere.
+**Q: Is Rank Math SEO plugin required?**
+A: Yes, the Rank Math SEO plugin must be installed and activated for this plugin to work.
 
-### 🔧 Installasjon og Oppsett
+### 🔧 Installation and Setup
 
-**Q: Hvordan installerer jeg plugin-et?**
-A: Last opp plugin-filen til `/wp-content/plugins/rank-math-api-manager/` og aktiver den i WordPress admin-panel.
+**Q: How do I install the plugin?**
+A: Upload the plugin file to `/wp-content/plugins/rank-math-api-manager/` and activate it in the WordPress admin panel.
 
-**Q: Hvilke tillatelser trenger jeg?**
-A: Du må ha `edit_posts`-rettigheter for å bruke API-endepunktene.
+**Q: What permissions do I need?**
+A: You must have `edit_posts` permissions to use the API endpoints.
 
-**Q: Hvordan setter jeg opp autentisering?**
-A: Bruk WordPress Application Passwords eller Basic Auth. Se installasjonsseksjonen for detaljer.
+**Q: How do I set up authentication?**
+A: Use WordPress Application Passwords or Basic Auth. See the installation section for details.
 
-### 🌐 API og Integrasjon
+### 🌐 API and Integration
 
-**Q: Hvilke SEO-felter kan jeg oppdatere?**
-A: Plugin-et støtter SEO Title, SEO Description, Canonical URL, og Focus Keyword.
+**Q: Which SEO fields can I update?**
+A: The plugin supports SEO Title, SEO Description, Canonical URL, and Focus Keyword.
 
-**Q: Kan jeg bruke dette med WooCommerce?**
-A: Ja, plugin-et støtter automatisk WooCommerce produkter hvis WooCommerce er aktivt.
+**Q: Can I use this with WooCommerce?**
+A: Yes, the plugin automatically supports WooCommerce products if WooCommerce is active.
 
-**Q: Hvordan integrerer jeg med n8n?**
-A: Se n8n-integrasjonsseksjonen i dokumentasjonen for eksempel-konfigurasjon.
+**Q: How do I integrate with n8n?**
+A: See the n8n integration section in the documentation for example configuration.
 
-**Q: Er det rate limiting på API-endepunktene?**
-A: Plugin-et bruker WordPress' innebygde rate limiting. For høy-trafikk nettsteder anbefales ekstra rate limiting.
+**Q: Is there rate limiting on the API endpoints?**
+A: The plugin uses WordPress's built-in rate limiting. For high-traffic sites, additional rate limiting is recommended.
 
-### 🛡️ Sikkerhet
+### 🛡️ Security
 
-**Q: Er API-endepunktene sikre?**
-A: Ja, alle endepunkter krever autentisering og validerer brukerrettigheter. Alle input-parametere sanitizeres.
+**Q: Are the API endpoints secure?**
+A: Yes, all endpoints require authentication and validate user permissions. All input parameters are sanitized.
 
-**Q: Hvordan rapporterer jeg sikkerhetsproblemer?**
-A: Send sikkerhetsrapporter til security@devora.no. Ikke opprett offentlige GitHub-issues for sikkerhetsproblemer.
+**Q: How do I report security issues?**
+A: Send security reports to security@devora.no. Do not create public GitHub issues for security problems.
 
-**Q: Logges sensitive data?**
-A: Nei, plugin-et logger ikke sensitive data.
+**Q: Is sensitive data logged?**
+A: No, the plugin does not log sensitive data.
 
-### 🔄 Oppdateringer og Vedlikehold
+### 🔄 Updates and Maintenance
 
-**Q: Hvordan oppdaterer jeg plugin-et?**
-A: Plugin-et kan oppdateres via WordPress admin-panel eller ved å laste opp ny versjon manuelt.
+**Q: How do I update the plugin?**
+A: The plugin can be updated via the WordPress admin panel or by manually uploading a new version.
 
-**Q: Er det automatiske oppdateringer?**
-A: Automatiske oppdateringer fra GitHub er planlagt for fremtidige versjoner.
+**Q: Are there automatic updates?**
+A: Automatic updates from GitHub are planned for future versions.
 
-**Q: Hvordan sjekker jeg om plugin-et fungerer?**
-A: Test API-endepunktet med en enkel POST-forespørsel til `/wp-json/rank-math-api/v1/update-meta`.
+**Q: How do I check if the plugin is working?**
+A: Test the API endpoint with a simple POST request to `/wp-json/rank-math-api/v1/update-meta`.
 
-### 🐛 Feilsøking
+### 🐛 Troubleshooting
 
-**Q: Får jeg 401 Unauthorized-feil?**
-A: Sjekk at Application Password er riktig konfigurert og at brukeren har `edit_posts`-rettigheter.
+**Q: I get 401 Unauthorized errors?**
+A: Check that the Application Password is correctly configured and that the user has `edit_posts` permissions.
 
-**Q: Får jeg 404 Not Found-feil?**
-A: Verifiser at plugin-et er aktivt og at WordPress REST API er tilgjengelig.
+**Q: I get 404 Not Found errors?**
+A: Verify that the plugin is active and that the WordPress REST API is available.
 
-**Q: Får jeg 400 Bad Request-feil?**
-A: Sjekk at `post_id` eksisterer og at alle parametere er riktig formatert.
+**Q: I get 400 Bad Request errors?**
+A: Check that the `post_id` exists and that all parameters are correctly formatted.
 
-**Q: Fungerer ikke WooCommerce-integrasjonen?**
-A: Sjekk at WooCommerce er installert og aktivert.
+**Q: WooCommerce integration doesn't work?**
+A: Check that WooCommerce is installed and activated.
 
-### 📈 Fremtidige Funksjoner
+### 📈 Future Features
 
-**Q: Kommer det støtte for flere SEO-felter?**
-A: Ja, se roadmap-seksjonen for planlagte funksjoner som sosiale medier meta-tagger og schema markup.
+**Q: Will there be support for more SEO fields?**
+A: Yes, see the roadmap section for planned features like social media meta tags and schema markup.
 
-**Q: Kommer det bulk-operasjoner?**
-A: Ja, bulk-oppdateringer er planlagt for fase 2 av utviklingen.
+**Q: Will there be bulk operations?**
+A: Yes, bulk updates are planned for phase 2 of development.
 
-**Q: Kommer det webhook-støtte?**
-A: Ja, webhook-støtte er planlagt for fase 3.
+**Q: Will there be webhook support?**
+A: Yes, webhook support is planned for phase 3.
 
-## 🐛 Feilsøking
+## 🐛 Troubleshooting
 
-### Vanlige problemer
+### Common Problems
 
 1. **401 Unauthorized**
 
-   - Sjekk at Application Password er riktig konfigurert
-   - Verifiser at brukeren har `edit_posts`-rettigheter
+   - Check that Application Password is correctly configured
+   - Verify that the user has `edit_posts` permissions
 
 2. **404 Not Found**
 
-   - Sjekk at plugin-et er aktivt
-   - Verifiser at REST API er tilgjengelig
+   - Check that the plugin is active
+   - Verify that the REST API is available
 
 3. **400 Bad Request**
-   - Sjekk at `post_id` eksisterer
-   - Valider at alle parametere er riktig formatert
+   - Check that `post_id` exists
+   - Validate that all parameters are correctly formatted
 
 ### Debugging
 
-Aktiver WordPress debug-logging for å se detaljerte feilmeldinger:
+Enable WordPress debug logging to see detailed error messages:
 
 ```php
 // wp-config.php
@@ -424,52 +424,56 @@ define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
 ```
 
-## 🤝 Bidrag
+## 🤝 Contributing
 
-For å bidra til dette plugin-et:
+To contribute to this plugin:
 
-1. Følg WordPress kodestandarder
-2. Test endringer grundig
-3. Oppdater dokumentasjon
-4. Bruk beskrivende commit-meldinger
-5. Følg vår [Code of Conduct](CODE_OF_CONDUCT.md)
+1. Follow WordPress coding standards
+2. Test changes thoroughly
+3. Update documentation
+4. Use descriptive commit messages
+5. Follow our [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## 📞 Support
 
-**Utviklet av**: Devora AS  
+**Developed by**: Devora AS  
 **Website**: https://devora.no
 
-### 🐛 Rapportere Bugs og Problemer
+### 🐛 Reporting Bugs and Issues
 
-Hvis du oppdager en bug eller har andre problemer med plugin-et, kan du:
+If you discover a bug or have other problems with the plugin, you can:
 
-1. **Opprett en GitHub Issue**: Besøk [GitHub Issues](https://github.com/devora-as/rank-math-api-manager/issues) og opprett en ny issue
-2. **Inkluder følgende informasjon**:
-   - WordPress versjon
-   - Plugin versjon
-   - PHP versjon
-   - Beskrivelse av problemet
-   - Steg for å reprodusere problemet
-   - Feilmeldinger (hvis noen)
-   - Skjermbilder (hvis relevant)
+1. **Create a GitHub Issue**: Visit [GitHub Issues](https://github.com/devora-as/rank-math-api-manager/issues) and create a new issue
+2. **Include the following information**:
+   - WordPress version
+   - Plugin version
+   - PHP version
+   - Description of the problem
+   - Steps to reproduce the problem
+   - Error messages (if any)
+   - Screenshots (if relevant)
 
-### 🔒 Sikkerhetsproblemer
+### 🔒 Security Issues
 
-**Viktig**: Ikke rapporter sikkerhetsproblemer via GitHub Issues. Send dem til **security@devora.no** i stedet.
+**Important**: Do not report security issues via GitHub Issues. Send them to **security@devora.no** instead.
 
-### 📧 Kontakt
+### 📧 Contact
 
-- **Generell support**: Kontakt Devora team via [devora.no](https://devora.no)
-- **Sikkerhetsproblemer**: security@devora.no
+- **General support**: Contact Devora team via [devora.no](https://devora.no)
+- **Security issues**: security@devora.no
 - **Code of Conduct**: conduct@devora.no
 
-### 📋 Dokumentasjon
+### 📋 Documentation
 
-- **[Changelog](CHANGELOG.md)**: Se endringslogg for alle versjoner
-- **[Security Policy](SECURITY.md)**: Sikkerhetspolicy og rapportering av sårbarheter
-- **[Code of Conduct](CODE_OF_CONDUCT.md)**: Felles retningslinjer for bidragsytere
+- **[Changelog](CHANGELOG.md)**: See changelog for all versions
+- **[Security Policy](SECURITY.md)**: Security policy and vulnerability reporting
+- **[Code of Conduct](CODE_OF_CONDUCT.md)**: Community guidelines for contributors
+- **[Norwegian Documentation](README-NORWEGIAN.md)**: Norwegian version of this documentation
+- **[Norwegian Changelog](CHANGELOG-NORWEGIAN.md)**: Norwegian changelog
+- **[Norwegian Security Policy](SECURITY-NORWEGIAN.md)**: Norwegian security policy
+- **[Norwegian Code of Conduct](CODE_OF_CONDUCT-NORWEGIAN.md)**: Norwegian code of conduct
 
 ---
 
-**Lisens**: [GPL v3](LICENSE.md) - Devora AS  
-**Sist oppdatert**: Juli 2025
+**License**: [GPL v3](LICENSE.md) - Devora AS  
+**Last Updated**: July 2025
