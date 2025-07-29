@@ -9,7 +9,7 @@
 ## 📋 Overview
 
 **Plugin Name**: Rank Math API Manager  
-**Version**: 1.6
+**Version**: 1.0.6
 **Author**: Devora AS  
 **Description**: WordPress plugin that exposes REST API endpoints to update Rank Math SEO metadata programmatically.
 
@@ -466,12 +466,12 @@ If you discover a bug or have other problems with the plugin, you can:
 ### 📋 Documentation
 
 - **[Changelog](CHANGELOG.md)**: See changelog for all versions
-- **[Security Policy](SECURITY.md)**: Security policy and vulnerability reporting
+- **[Security Policy](docs/SECURITY.md)**: Security policy and vulnerability reporting
 - **[Code of Conduct](CODE_OF_CONDUCT.md)**: Community guidelines for contributors
 - **[Norwegian Documentation](README-NORWEGIAN.md)**: Norwegian version of this documentation
-- **[Norwegian Changelog](CHANGELOG-NORWEGIAN.md)**: Norwegian changelog
-- **[Norwegian Security Policy](SECURITY-NORWEGIAN.md)**: Norwegian security policy
-- **[Norwegian Code of Conduct](CODE_OF_CONDUCT-NORWEGIAN.md)**: Norwegian code of conduct
+- **[Norwegian Changelog](docs/CHANGELOG-NORWEGIAN.md)**: Norwegian changelog
+- **[Norwegian Security Policy](docs/SECURITY-NORWEGIAN.md)**: Norwegian security policy
+- **[Norwegian Code of Conduct](docs/CODE_OF_CONDUCT-NORWEGIAN.md)**: Norwegian code of conduct
 
 ---
 
