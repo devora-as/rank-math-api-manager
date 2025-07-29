@@ -2,13 +2,13 @@
 
 ## 🚀 Høy Prioritet
 
-### 1. Automatiske Oppdateringer fra GitHub
+### 1. Automatiske Oppdateringer fra GitHub ✅ FULLFØRT
 
-- [ ] Implementer støtte for automatiske oppdateringer direkte fra GitHub releases
-- [ ] Legg til update checker som sjekker GitHub releases
-- [ ] Implementer sikker nedlasting og installasjon av oppdateringer
-- [ ] Legg til admin-notifikasjoner for tilgjengelige oppdateringer
-- [ ] Test oppdateringsprosessen grundig
+- [x] Implementer støtte for automatiske oppdateringer direkte fra GitHub releases
+- [x] Legg til update checker som sjekker GitHub releases
+- [x] Implementer sikker nedlasting og installasjon av oppdateringer
+- [x] Legg til admin-notifikasjoner for tilgjengelige oppdateringer
+- [x] Test oppdateringsprosessen grundig
 
 ### 2. Dokumentasjon i /docs Mappe ✅ FULLFØRT
 

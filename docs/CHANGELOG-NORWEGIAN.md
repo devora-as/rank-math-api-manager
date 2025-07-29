@@ -5,14 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.7] - 2025-07-XX
 
 ### Added
 
-- Support for automatic updates directly from GitHub releases
+- ✅ **Automatiske Oppdateringer fra GitHub**: Komplett implementering av automatisk oppdateringssystem
+  - GitHub API-integrasjon for å sjekke nyeste releases
+  - Sikker nedlasting og installasjon av oppdateringer
+  - Admin-notifikasjoner for tilgjengelige oppdateringer
+  - Manuell oppdateringssjekk-grensesnitt
+  - Oppdateringslogging og feilhåndtering
+  - Rate limiting og caching for API-kall
 - Enhanced plugin dependency checking
 - Comprehensive documentation in /docs folder
 - WordPress Plugin Check (PCP) compatibility improvements
+
+### Changed
+
+- Improved code structure with singleton pattern
+- Enhanced security measures with proper nonce verification
+- Better error handling and logging throughout the plugin
+- Updated plugin version to 1.0.7
+
+### Security
+
+- Implemented proper input validation and sanitization
+- Added capability checks for all admin functions
+- Secure API communication with GitHub
+- Rate limiting for update checks
+
+## [Unreleased]
 
 ### Changed
 
