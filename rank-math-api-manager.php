@@ -286,11 +286,13 @@ register_deactivation_hook(__FILE__, function() {
 	delete_option('rank_math_api_last_update_check');
 });
 
-// Uninstall hook
-register_uninstall_hook(__FILE__, function() {
-	// Remove all plugin options
-	delete_option('rank_math_api_activated');
-	delete_option('rank_math_api_last_update_check');
-	delete_option('rank_math_api_latest_release');
-	delete_option('rank_math_api_update_logs');
-});
+function rank_math_api_manager_uninstall() {
+    // Remove all plugin options
+    delete_option('rank_math_api_activated');
+    delete_option('rank_math_api_last_update_check');
+    delete_option('rank_math_api_latest_release');
+    delete_option('rank_math_api_update_logs');
+}
+
+register_uninstall_hook(__FILE__, 'rank_math_api_manager_uninstall');
+
