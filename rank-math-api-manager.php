@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Rank Math API Manager
  * Plugin URI: https://devora.no/plugins/rankmath-api-manager
- * Description: Manages the update of Rank Math metadata (SEO Title, SEO Description, Canonical URL, Focus Keyword) via the REST API for WordPress posts and WooCommerce products.
+ * Description: A WordPress plugin that manages the update of Rank Math metadata (SEO Title, SEO Description, Canonical URL, Focus Keyword) via the REST API for WordPress posts and WooCommerce products.
  * Version: 1.0.6
  * Author: Devora AS
  * Author URI: https://devora.no
