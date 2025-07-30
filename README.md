@@ -1,4 +1,4 @@
-# Rank Math API Manager Plugin
+# Rank Math API Manager
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
@@ -10,11 +10,11 @@
 **Plugin Name**: Rank Math API Manager  
 **Version**: 1.0.7
 **Author**: [Devora AS](https://devora.no/)
-**Description**: WordPress plugin that exposes REST API endpoints to update [Rank Math](https://rankmath.com/) SEO metadata programmatically.
+**Description**: WordPress extension that exposes REST API endpoints to update [Rank Math](https://rankmath.com/) SEO metadata programmatically.
 
 ## 🎯 Purpose
 
-This plugin extends the WordPress REST API with custom endpoints that allow external systems (such as n8n workflows) to update Rank Math SEO fields directly via API calls. This eliminates the need for manual SEO configuration and integrates seamlessly with automation.
+This extension enhances the WordPress REST API with custom endpoints that allow external systems (such as n8n workflows) to update Rank Math SEO fields directly via API calls. This eliminates the need for manual SEO configuration and integrates seamlessly with automation.
 
 ## ✨ Features
 

@@ -36,16 +36,39 @@ class Rank_Math_API_Update_Manager {
      *
      * @var array
      */
-    private $plugin_info = array(
-        'slug' => 'rank-math-api-manager',
-        'plugin_file' => 'rank-math-api-manager/rank-math-api-manager.php',
-        'current_version' => '1.0.6'
-    );
+    private $plugin_info = array();
+    
+    /**
+     * Initialize plugin info
+     */
+    private function init_plugin_info() {
+        // Get the actual plugin file path using WordPress core functions
+        // This ensures we get the exact same path WordPress uses internally
+        $main_plugin_file = dirname(__DIR__) . '/rank-math-api-manager.php';
+        
+        // Get plugin data to ensure we have the correct information
+        if (!function_exists('get_plugin_data')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        
+        $plugin_data = get_plugin_data($main_plugin_file);
+        $plugin_file = plugin_basename($main_plugin_file);
+        
+        $this->plugin_info = array(
+            'slug' => dirname($plugin_file),
+            'plugin_file' => $plugin_file,
+            'current_version' => $plugin_data['Version'],
+            'plugin_uri' => $plugin_data['PluginURI'],
+            'name' => $plugin_data['Name'],
+            'main_file' => $main_plugin_file
+        );
+    }
 
     /**
      * Constructor
      */
     public function __construct() {
+        $this->init_plugin_info();
         $this->init_hooks();
     }
 
@@ -57,11 +80,14 @@ class Rank_Math_API_Update_Manager {
         add_filter('pre_set_site_transient_update_plugins', array($this, 'check_for_updates'));
         add_filter('plugins_api', array($this, 'plugin_info'), 10, 3);
         
+        // Auto-update support
+        add_filter('auto_update_plugin', array($this, 'auto_update_plugin'), 10, 2);
+        
         // Admin hooks
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'handle_admin_actions'));
         add_action('admin_notices', array($this, 'admin_notices'));
-        
+        add_action('admin_notices', array($this, 'debug_plugin_info'));
         // AJAX handlers
         add_action('wp_ajax_rank_math_api_check_updates', array($this, 'ajax_check_updates'));
         add_action('wp_ajax_rank_math_api_force_update', array($this, 'ajax_force_update'));
@@ -77,7 +103,11 @@ class Rank_Math_API_Update_Manager {
      * @return object Modified transient
      */
     public function check_for_updates($transient) {
-        // Only check if we're in admin or during cron
+        // CRITICAL: Always ensure our plugin is registered in the transient
+        // This is what makes the auto-update toggle appear
+        $this->ensure_plugin_in_transient($transient);
+
+        // Only check GitHub if we're in admin or during cron
         if (!is_admin() && !wp_doing_cron()) {
             return $transient;
         }
@@ -90,38 +120,98 @@ class Rank_Math_API_Update_Manager {
             return $transient;
         }
 
+        // Check for actual GitHub updates
+        $this->check_github_updates($transient);
+
+        return $transient;
+    }
+
+    /**
+     * CRITICAL: Ensure plugin is always registered in transient for auto-update support
+     *
+     * @param object $transient Update transient
+     */
+    private function ensure_plugin_in_transient($transient) {
+        // Ensure transient has the required properties
+        if (!isset($transient->response)) {
+            $transient->response = array();
+        }
+        if (!isset($transient->no_update)) {
+            $transient->no_update = array();
+        }
+
+        // If plugin is not in either array, add it to no_update by default
+        // This ensures WordPress always knows about our plugin for auto-updates
+        if (!isset($transient->response[$this->plugin_info['plugin_file']]) && 
+            !isset($transient->no_update[$this->plugin_info['plugin_file']])) {
+            
+            $transient->no_update[$this->plugin_info['plugin_file']] = $this->get_plugin_update_object($this->plugin_info['current_version']);
+        }
+    }
+
+    /**
+     * Check for actual updates from GitHub
+     *
+     * @param object $transient Update transient
+     */
+    private function check_github_updates($transient) {
         // Get latest release from GitHub
         $latest_release = $this->get_latest_release();
 
         if (!$latest_release || is_wp_error($latest_release)) {
             update_option('rank_math_api_last_update_check', time());
-            return $transient;
+            return;
         }
 
-        // Compare versions
+        // Remove from both arrays first
+        unset($transient->response[$this->plugin_info['plugin_file']]);
+        unset($transient->no_update[$this->plugin_info['plugin_file']]);
+
+        // Compare versions and add to appropriate array
         if (version_compare($latest_release['version'], $this->plugin_info['current_version'], '>')) {
-            $transient->response[$this->plugin_info['plugin_file']] = (object) array(
-                'slug' => $this->plugin_info['slug'],
-                'new_version' => $latest_release['version'],
-                'url' => $latest_release['url'],
-                'package' => $latest_release['download_url'],
-                'requires' => '5.0',
-                'requires_php' => '7.4',
-                'tested' => '6.4',
-                'last_updated' => $latest_release['published_at'],
-                'sections' => array(
-                    'description' => $latest_release['description'],
-                    'changelog' => $latest_release['changelog']
-                )
+            // Update available
+            $update_object = $this->get_plugin_update_object($latest_release['version'], $latest_release['download_url']);
+            $update_object->sections = array(
+                'description' => $latest_release['description'],
+                'changelog' => $latest_release['changelog']
             );
+            
+            $transient->response[$this->plugin_info['plugin_file']] = $update_object;
 
             // Store update information
             update_option('rank_math_api_latest_release', $latest_release);
+        } else {
+            // No update available
+            $transient->no_update[$this->plugin_info['plugin_file']] = $this->get_plugin_update_object($this->plugin_info['current_version']);
         }
 
         update_option('rank_math_api_last_update_check', time());
+    }
 
-        return $transient;
+    /**
+     * Get standardized plugin update object that matches WordPress.org format
+     *
+     * @param string $version Plugin version
+     * @param string $package Download URL (optional)
+     * @return object Plugin update object
+     */
+    private function get_plugin_update_object($version, $package = '') {
+        return (object) array(
+            'id' => $this->plugin_info['plugin_file'],
+            'slug' => $this->plugin_info['slug'],
+            'plugin' => $this->plugin_info['plugin_file'],
+            'new_version' => $version,
+            'url' => $this->plugin_info['plugin_uri'],
+            'package' => $package,
+            'icons' => array(),
+            'banners' => array(),
+            'banners_rtl' => array(),
+            'requires' => '5.0',
+            'tested' => '6.8',
+            'requires_php' => '7.4',
+            'compatibility' => new stdClass(),
+            'auto_update' => null, // Let WordPress handle this
+        );
     }
 
     /**
@@ -290,7 +380,7 @@ class Rank_Math_API_Update_Manager {
     public function admin_page() {
         // Verify nonce for security
         if (isset($_POST['rank_math_api_update_nonce']) && 
-            !wp_verify_nonce($_POST['rank_math_api_update_nonce'], 'rank_math_api_update_action')) {
+            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['rank_math_api_update_nonce'])), 'rank_math_api_update_action')) {
             wp_die('Security check failed');
         }
 
@@ -306,12 +396,12 @@ class Rank_Math_API_Update_Manager {
             <div class="card">
                 <h2>Current Status</h2>
                 <p><strong>Current Version:</strong> <?php echo esc_html($current_version); ?></p>
-                <p><strong>Last Check:</strong> <?php echo $last_check ? esc_html(date('Y-m-d H:i:s', $last_check)) : 'Never'; ?></p>
+                <p><strong>Last Check:</strong> <?php echo $last_check ? esc_html(gmdate('Y-m-d H:i:s', $last_check)) : 'Never'; ?></p>
                 
                 <?php if ($update_available): ?>
                     <div class="notice notice-success">
                         <p><strong>Update Available!</strong> Version <?php echo esc_html($latest_release['version']); ?> is available.</p>
-                        <p><a href="<?php echo admin_url('update-core.php'); ?>" class="button button-primary">Update Now</a></p>
+                        <p><a href="<?php echo esc_url(admin_url('update-core.php')); ?>" class="button button-primary">Update Now</a></p>
                     </div>
                 <?php else: ?>
                     <div class="notice notice-info">
@@ -333,7 +423,7 @@ class Rank_Math_API_Update_Manager {
             <div class="card">
                 <h2>Latest Release Information</h2>
                 <p><strong>Version:</strong> <?php echo esc_html($latest_release['version']); ?></p>
-                <p><strong>Published:</strong> <?php echo esc_html(date('Y-m-d H:i:s', strtotime($latest_release['published_at']))); ?></p>
+                <p><strong>Published:</strong> <?php echo esc_html(gmdate('Y-m-d H:i:s', strtotime($latest_release['published_at']))); ?></p>
                 <p><strong>Download:</strong> <a href="<?php echo esc_url($latest_release['url']); ?>" target="_blank">View on GitHub</a></p>
                 
                 <?php if (!empty($latest_release['description'])): ?>
@@ -379,7 +469,13 @@ class Rank_Math_API_Update_Manager {
             return;
         }
 
-        if (isset($_POST['action']) && $_POST['action'] === 'check_updates') {
+        if (isset($_POST['action']) && sanitize_text_field(wp_unslash($_POST['action'])) === 'check_updates') {
+            // Verify nonce for security
+            if (!isset($_POST['rank_math_api_update_nonce']) || 
+                !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['rank_math_api_update_nonce'])), 'rank_math_api_update_action')) {
+                wp_die('Security check failed');
+            }
+            
             // Clear cache and force update check
             delete_transient('rank_math_api_latest_release_cache');
             delete_option('rank_math_api_last_update_check');
@@ -398,7 +494,7 @@ class Rank_Math_API_Update_Manager {
      */
     public function ajax_check_updates() {
         // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'rank_math_api_update_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'rank_math_api_update_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -434,7 +530,7 @@ class Rank_Math_API_Update_Manager {
      */
     public function ajax_force_update() {
         // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'rank_math_api_update_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'rank_math_api_update_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -536,7 +632,7 @@ class Rank_Math_API_Update_Manager {
      * @param string $message Error message
      */
     private function log_error($message) {
-        error_log('Rank Math API Update Manager Error: ' . $message);
+        // Note: Direct logging removed for production
         
         // Store in WordPress options for admin viewing
         $logs = get_option('rank_math_api_update_logs', array());
@@ -560,7 +656,7 @@ class Rank_Math_API_Update_Manager {
      * @param string $message Info message
      */
     private function log_info($message) {
-        error_log('Rank Math API Update Manager Info: ' . $message);
+        // Note: Direct logging removed for production
         
         // Store in WordPress options for admin viewing
         $logs = get_option('rank_math_api_update_logs', array());
@@ -576,5 +672,83 @@ class Rank_Math_API_Update_Manager {
         }
         
         update_option('rank_math_api_update_logs', $logs);
+    }
+
+    /**
+     * Enable auto-updates for this plugin
+     *
+     * @param bool $update Whether to auto-update
+     * @param object $item Plugin data
+     * @return bool Whether to auto-update
+     */
+    public function auto_update_plugin($update, $item) {
+        // Check if this is our plugin
+        if (isset($item->plugin) && $item->plugin === $this->plugin_info['plugin_file']) {
+            // Check if auto-updates are enabled for this plugin in WordPress settings
+            $auto_updates = get_site_option('auto_update_plugins', array());
+            return in_array($this->plugin_info['plugin_file'], $auto_updates, true);
+        }
+        
+        return $update;
+    }
+
+    /**
+     * Debug method to check plugin registration
+     * Add ?rank_math_debug=1 to any admin page to see debug info
+     */
+    public function debug_plugin_info() {
+        if (isset($_GET['rank_math_debug']) && current_user_can('manage_options')) {
+            echo '<div style="background: #fff; border: 1px solid #ccc; padding: 15px; margin: 10px; font-family: monospace;">';
+            echo '<h3 style="margin-top: 0; color: #0073aa;">🔧 Rank Math API Manager Debug Info</h3>';
+            
+            echo '<h4>Plugin Information:</h4>';
+            echo '<p><strong>Plugin File:</strong> ' . esc_html($this->plugin_info['plugin_file']) . '</p>';
+            echo '<p><strong>Plugin Slug:</strong> ' . esc_html($this->plugin_info['slug']) . '</p>';
+            echo '<p><strong>Current Version:</strong> ' . esc_html($this->plugin_info['current_version']) . '</p>';
+            echo '<p><strong>Plugin Name:</strong> ' . esc_html($this->plugin_info['name']) . '</p>';
+            echo '<p><strong>Plugin URI:</strong> ' . esc_html($this->plugin_info['plugin_uri']) . '</p>';
+            
+            echo '<h4>Update Transient Status:</h4>';
+            $transient = get_site_transient('update_plugins');
+            if ($transient && isset($transient->no_update[$this->plugin_info['plugin_file']])) {
+                echo '<p style="color: green;"><strong>✓ Status:</strong> Found in no_update array (Good for auto-updates)</p>';
+            } elseif ($transient && isset($transient->response[$this->plugin_info['plugin_file']])) {
+                echo '<p style="color: blue;"><strong>✓ Status:</strong> Found in response array (Update available)</p>';
+            } else {
+                echo '<p style="color: red;"><strong>✗ Status:</strong> NOT found in transient (Problem!)</p>';
+            }
+            
+            echo '<h4>Auto-Update Status:</h4>';
+            $auto_updates = get_site_option('auto_update_plugins', array());
+            if (in_array($this->plugin_info['plugin_file'], $auto_updates, true)) {
+                echo '<p style="color: green;"><strong>✓ Auto-updates:</strong> Enabled</p>';
+            } else {
+                echo '<p><strong>Auto-updates:</strong> Disabled (This is normal - user can enable manually)</p>';
+            }
+            
+            echo '<h4>WordPress Plugin Detection:</h4>';
+            if (!function_exists('get_plugins')) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+            $all_plugins = get_plugins();
+            if (isset($all_plugins[$this->plugin_info['plugin_file']])) {
+                echo '<p style="color: green;"><strong>✓ WordPress Detection:</strong> Plugin found in get_plugins()</p>';
+            } else {
+                echo '<p style="color: red;"><strong>✗ WordPress Detection:</strong> Plugin NOT found in get_plugins() (Problem!)</p>';
+            }
+            
+            echo '<h4>Force Update Check:</h4>';
+            echo '<p><a href="' . esc_url(add_query_arg('force_update_check', '1')) . '" style="color: #0073aa;">🔄 Force Update Check Now</a></p>';
+            
+            echo '</div>';
+            
+            // Handle force update check
+            if (isset($_GET['force_update_check'])) {
+                delete_site_transient('update_plugins');
+                echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin: 10px; color: #155724;">';
+                echo '<strong>Update check forced!</strong> Refresh the page to see updated status.';
+                echo '</div>';
+            }
+        }
     }
 } 

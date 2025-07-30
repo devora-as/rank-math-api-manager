@@ -1,5 +1,8 @@
 # WordPress Plugin .gitignore
 
+#Test files
+tests/
+
 #Temporary todo list
 todo.md
 TODO-NORWEGIAN.md
