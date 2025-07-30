@@ -1,13 +1,13 @@
 # Rank Math API Manager
 
+![Full SEO Automation in WordPress with Rank Math API Manager](assets/images/rank-math-api-wordpress-seo-automation-workflow.png)
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net/)
 [![WordPress Version](https://img.shields.io/badge/WordPress-5.0+-green.svg)](https://wordpress.org/)
 
 ## 📋 Overview
-
-![Full SEO Automation in WordPress with Rank Math API Manager](assets/images/rank-math-api-wordpress-seo-automation-workflow.png)
 
 **Plugin Name**: Rank Math API Manager  
 **Version**: 1.0.7
