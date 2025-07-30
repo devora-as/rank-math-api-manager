@@ -7,6 +7,8 @@
 
 ## 📋 Overview
 
+![Full SEO Automation in WordPress with Rank Math API Manager](https://github.com/user-attachments/assets/images/rank-math-api-wordpress-seo-automation-workflow.png)
+
 **Plugin Name**: Rank Math API Manager  
 **Version**: 1.0.7
 **Author**: [Devora AS](https://devora.no/)
