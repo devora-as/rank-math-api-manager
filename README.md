@@ -9,8 +9,8 @@
 
 **Plugin Name**: Rank Math API Manager  
 **Version**: 1.0.7
-**Author**: Devora AS  
-**Description**: WordPress plugin that exposes REST API endpoints to update Rank Math SEO metadata programmatically.
+**Author**: [Devora AS](https://devora.no/)
+**Description**: WordPress plugin that exposes REST API endpoints to update [Rank Math](https://rankmath.com/) SEO metadata programmatically.
 
 ## 🎯 Purpose
 
