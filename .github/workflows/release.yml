@@ -38,10 +38,13 @@ jobs:
           cp CODE_OF_CONDUCT-NORWEGIAN.md rank-math-api-manager/
           cp LICENSE.md rank-math-api-manager/
 
-          # Create ZIP file
+          # Create versioned ZIP file
           zip -r rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip rank-math-api-manager/
 
-      - name: Upload Release Asset
+          # Create standard ZIP file for easy installation
+          zip -r rank-math-api-manager.zip rank-math-api-manager/
+
+      - name: Upload Versioned Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,4 +52,14 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip
           asset_name: rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Standard Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./rank-math-api-manager.zip
+          asset_name: rank-math-api-manager.zip
           asset_content_type: application/zip

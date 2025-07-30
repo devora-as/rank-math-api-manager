@@ -1,7 +1,6 @@
 # Rank Math API Manager Plugin
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub downloads](https://img.shields.io/github/downloads/devora-as/rank-math-api-manager/total.svg)](https://github.com/devora-as/rank-math-api-manager/releases)
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net/)
 [![WordPress Version](https://img.shields.io/badge/WordPress-5.0+-green.svg)](https://wordpress.org/)
@@ -9,7 +8,7 @@
 ## 📋 Overview
 
 **Plugin Name**: Rank Math API Manager  
-**Version**: 1.0.6
+**Version**: 1.0.7
 **Author**: Devora AS  
 **Description**: WordPress plugin that exposes REST API endpoints to update Rank Math SEO metadata programmatically.
 
