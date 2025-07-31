@@ -1,9 +1,8 @@
 name: Build and Release Plugin
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -18,43 +17,51 @@ jobs:
         with:
           php-version: "8.1"
 
-      - name: Create plugin ZIP
+      - name: Create production-ready plugin ZIP
         run: |
-          # Create plugin directory
+          # Create plugin directory with correct name
           mkdir -p rank-math-api-manager
 
-          # Copy plugin files (excluding development files)
-          cp -r rank-math-api-manager.php rank-math-api-manager/
-          cp -r includes/ rank-math-api-manager/
-          cp -r assets/ rank-math-api-manager/
-          cp -r docs/ rank-math-api-manager/
-          cp README.md rank-math-api-manager/
-          cp README-NORWEGIAN.md rank-math-api-manager/
-          cp CHANGELOG.md rank-math-api-manager/
-          cp CHANGELOG-NORWEGIAN.md rank-math-api-manager/
-          cp SECURITY.md rank-math-api-manager/
-          cp SECURITY-NORWEGIAN.md rank-math-api-manager/
-          cp CODE_OF_CONDUCT.md rank-math-api-manager/
-          cp CODE_OF_CONDUCT-NORWEGIAN.md rank-math-api-manager/
-          cp LICENSE.md rank-math-api-manager/
+          # Copy core plugin files
+          cp rank-math-api-manager.php rank-math-api-manager/
 
-          # Create versioned ZIP file
-          zip -r rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip rank-math-api-manager/
+          # Copy includes directory if exists
+          if [ -d "includes" ]; then
+            cp -r includes/ rank-math-api-manager/
+          fi
 
-          # Create standard ZIP file for easy installation
+          # Copy assets directory if exists
+          if [ -d "assets" ]; then
+            cp -r assets/ rank-math-api-manager/
+          fi
+
+          # Copy essential documentation
+          [ -f "README.md" ] && cp README.md rank-math-api-manager/
+          [ -f "LICENSE" ] && cp LICENSE rank-math-api-manager/
+          [ -f "LICENSE.md" ] && cp LICENSE.md rank-math-api-manager/
+          [ -f "CHANGELOG.md" ] && cp CHANGELOG.md rank-math-api-manager/
+          [ -f "changelog.txt" ] && cp changelog.txt rank-math-api-manager/
+          [ -f "readme.txt" ] && cp readme.txt rank-math-api-manager/
+
+          # Remove any development files that may have been copied
+          rm -rf rank-math-api-manager/.git* 2>/dev/null || true
+          rm -rf rank-math-api-manager/.github/ 2>/dev/null || true
+          rm -rf rank-math-api-manager/tests/ 2>/dev/null || true
+          rm -rf rank-math-api-manager/.cursor/ 2>/dev/null || true
+          rm -rf rank-math-api-manager/node_modules/ 2>/dev/null || true
+          rm -f rank-math-api-manager/.DS_Store 2>/dev/null || true
+          rm -f rank-math-api-manager/TODO*.md 2>/dev/null || true
+          rm -f rank-math-api-manager/.env* 2>/dev/null || true
+          rm -f rank-math-api-manager/.gitignore 2>/dev/null || true
+
+          # Create ZIP file with WordPress-compatible name
           zip -r rank-math-api-manager.zip rank-math-api-manager/
 
-      - name: Upload Versioned Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip
-          asset_name: rank-math-api-manager-${GITHUB_REF#refs/tags/}.zip
-          asset_content_type: application/zip
+          # Verify ZIP structure
+          echo "📦 ZIP Contents:"
+          unzip -l rank-math-api-manager.zip | head -20
 
-      - name: Upload Standard Release Asset
+      - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,3 +70,10 @@ jobs:
           asset_path: ./rank-math-api-manager.zip
           asset_name: rank-math-api-manager.zip
           asset_content_type: application/zip
+
+      - name: Verify Release Completion
+        run: |
+          echo "✅ Release asset uploaded successfully"
+          echo "📦 File: rank-math-api-manager.zip"
+          echo "📋 Contents: Production-ready plugin files only"
+          echo "🚀 Ready for WordPress auto-update system"

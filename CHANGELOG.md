@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2025-07-31
+
+### Added
+
+- ✅ **Complete WordPress Auto-Update System**: Production-ready auto-update implementation
+  - WordPress native update integration using `pre_set_site_transient_update_plugins` filter
+  - GitHub API integration for checking latest releases with proper caching
+  - Custom ZIP asset support with correct folder structure handling
+  - "View Details" modal support via `plugins_api` filter
+  - Auto-update toggle functionality for users
+  - Enhanced debug logging and error handling
+- **GitHub Rate Limiting**: 5-minute intervals between API calls to prevent abuse
+- **Transient Caching**: 1-hour GitHub API response caching for improved performance
+- **Update URI Header**: Prevents conflicts with WordPress.org update system
+
+### Changed
+
+- Enhanced class structure with proper singleton pattern implementation
+- Improved error handling with comprehensive debug logging
+- Updated plugin version to 1.0.8
+- Optimized GitHub API communication with fallback mechanisms
+
+### Security
+
+- Enhanced input validation and sanitization for all API endpoints
+- Proper capability checks (`edit_posts`) for all update operations
+- Secure GitHub API communication with proper error handling
+- Rate limiting to prevent API abuse
+
+### Fixed
+
+- Proper ZIP file structure handling for WordPress plugin updates
+- Version comparison logic for accurate update detection
+- Plugin folder naming consistency during updates
+
 ## [1.0.7] - 2025-07-29
 
 ### Added

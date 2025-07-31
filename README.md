@@ -367,7 +367,7 @@ A: No, the plugin does not log sensitive data.
 A: The plugin can be updated via the WordPress admin panel or by manually uploading a new version.
 
 **Q: Are there automatic updates?**
-A: Automatic updates are not currently available. This feature will be implemented in a future version.
+A: Yes! The plugin includes a complete WordPress-native auto-update system that checks for new releases on GitHub and provides update notifications just like WordPress.org plugins. Users can enable/disable automatic updates and view release details.
 
 **Q: How do I check if the plugin is working?**
 A: Test the API endpoint with a simple POST request to `/wp-json/rank-math-api/v1/update-meta`.
