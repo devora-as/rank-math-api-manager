@@ -9,16 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ✅ **Automatic Updates from GitHub**: Complete implementation of automatic update system
-  - GitHub API integration for checking latest releases
-  - Secure download and installation of updates
-  - Admin notifications for available updates
-  - Manual update checking interface
-  - Update logging and error handling
-  - Rate limiting and caching for API calls
 - Enhanced plugin dependency checking
 - Comprehensive documentation in /docs folder
 - WordPress Plugin Check (PCP) compatibility improvements
+
+### Removed
+
+- **Auto-Update System**: Removed previous auto-update implementation to prepare for fresh implementation
+  - Removed GitHub API integration
+  - Removed update manager class
+  - Removed auto-update related hooks and filters
+  - Cleaned up update-related options and transients
 
 ### Changed
 

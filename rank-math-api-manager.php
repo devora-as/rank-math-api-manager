@@ -9,7 +9,7 @@
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: rank-math-api-manager
- * GitHub Plugin URI: https://github.com/devora-as/rank-math-api-manager
+ * Update URI: https://github.com/devora-as/rank-math-api-manager
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -46,13 +46,6 @@ class Rank_Math_API_Manager_Extended {
 	private static $instance = null;
 
 	/**
-	 * Update manager instance
-	 *
-	 * @var Rank_Math_API_Update_Manager
-	 */
-	private $update_manager = null;
-
-	/**
 	 * Get plugin instance
 	 *
 	 * @return Rank_Math_API_Manager_Extended
@@ -69,7 +62,6 @@ class Rank_Math_API_Manager_Extended {
 	 */
 	private function __construct() {
 		$this->init_hooks();
-		$this->load_dependencies();
 	}
 
 	/**
@@ -83,11 +75,6 @@ class Rank_Math_API_Manager_Extended {
 		add_action( 'activated_plugin', [ $this, 'on_plugin_activated' ] );
 		add_action( 'deactivated_plugin', [ $this, 'on_plugin_deactivated' ] );
 		
-		// Always initialize update manager (independent of other dependencies)
-		add_action( 'plugins_loaded', [ $this, 'init_update_manager' ] );
-		
-
-		
 		// Only register core functionality hooks if dependencies are met
 		if ( $this->are_dependencies_met() ) {
 			add_action( 'rest_api_init', [ $this, 'register_meta_fields' ] );
@@ -97,17 +84,6 @@ class Rank_Math_API_Manager_Extended {
 		
 		// Admin notices for dependency issues
 		add_action( 'admin_notices', [ $this, 'display_dependency_notices' ] );
-	}
-
-	/**
-	 * Load plugin dependencies
-	 */
-	private function load_dependencies() {
-		// Load update manager
-		$update_manager_file = RANK_MATH_API_PLUGIN_DIR . 'includes/class-rank-math-api-update-manager.php';
-		if (file_exists($update_manager_file)) {
-			require_once $update_manager_file;
-		}
 	}
 
 	/**
@@ -180,11 +156,6 @@ class Rank_Math_API_Manager_Extended {
 	 * @since 1.0.7
 	 */
 	private function handle_dependencies_missing() {
-		// Clear any cached data
-		delete_transient( 'rank_math_api_latest_release_cache' );
-		
-		// Note: Dependency issue detected (logging removed for production)
-		
 		// Add admin notice
 		add_action( 'admin_notices', function() {
 			echo '<div class="notice notice-error"><p>';
@@ -470,28 +441,6 @@ class Rank_Math_API_Manager_Extended {
 	}
 
 	/**
-	 * Initialize update manager
-	 */
-	public function init_update_manager() {
-		// Load the update manager class file
-		$update_manager_file = plugin_dir_path( __FILE__ ) . 'includes/class-rank-math-api-update-manager.php';
-		
-		if ( ! file_exists( $update_manager_file ) ) {
-			return;
-		}
-		
-		require_once $update_manager_file;
-		
-		// Check if class was loaded successfully
-		if ( ! class_exists( 'Rank_Math_API_Update_Manager' ) ) {
-			return;
-		}
-		
-		// Initialize the update manager
-		$this->update_manager = new Rank_Math_API_Update_Manager();
-	}
-
-	/**
 	 * Enqueue admin scripts and styles
 	 */
 	public function enqueue_admin_scripts($hook) {
@@ -518,13 +467,7 @@ class Rank_Math_API_Manager_Extended {
 		// Localize script with AJAX URL and nonce
 		wp_localize_script('rank-math-api-admin', 'rankMathApi', array(
 			'ajaxUrl' => admin_url('admin-ajax.php'),
-			'nonce' => wp_create_nonce('rank_math_api_update_nonce'),
-			'strings' => array(
-				'checkingUpdates' => __('Checking for updates...', 'rank-math-api-manager'),
-				'updateAvailable' => __('Update available!', 'rank-math-api-manager'),
-				'noUpdateAvailable' => __('No updates available.', 'rank-math-api-manager'),
-				'errorChecking' => __('Error checking for updates.', 'rank-math-api-manager')
-			)
+			'nonce' => wp_create_nonce('rank_math_api_update_nonce')
 		));
 	}
 
@@ -632,15 +575,6 @@ class Rank_Math_API_Manager_Extended {
 	public function get_version() {
 		return RANK_MATH_API_VERSION;
 	}
-
-	/**
-	 * Get update manager instance
-	 *
-	 * @return Rank_Math_API_Update_Manager|null
-	 */
-	public function get_update_manager() {
-		return $this->update_manager;
-	}
 }
 
 // Initialize the plugin
@@ -698,10 +632,6 @@ function rank_math_api_manager_activate() {
 function rank_math_api_manager_deactivate() {
 	// Clear scheduled events
 	wp_clear_scheduled_hook('rank_math_api_update_check');
-	
-	// Clear caches
-	delete_transient('rank_math_api_latest_release_cache');
-	delete_option('rank_math_api_last_update_check');
 }
 
 // Activation hook
@@ -720,13 +650,7 @@ register_deactivation_hook(__FILE__, 'rank_math_api_manager_deactivate');
 function rank_math_api_manager_uninstall() {
 	// Remove all plugin options
 	delete_option('rank_math_api_activated');
-	delete_option('rank_math_api_last_update_check');
-	delete_option('rank_math_api_latest_release');
-	delete_option('rank_math_api_update_logs');
 	delete_option('rank_math_api_dependencies_status');
-	
-	// Remove any transients
-	delete_transient('rank_math_api_latest_release_cache');
 	
 	// Clear any scheduled events
 	wp_clear_scheduled_hook('rank_math_api_update_check');
